@@ -1,40 +1,21 @@
 """
-LLM factories and caching configuration.
+LLM factories for the RAG application.
 
 This module provides cached, logfire-instrumented factory functions to construct:
 1. Response LLM (routes queries to the responder config via Portkey)
 2. Grader/Worker LLM (routes queries to the worker config via Portkey)
 
-It also configures the RedisSemanticCache for LLM caching.
+No semantic caching is applied - all queries are processed fresh.
 """
 
 from functools import lru_cache
 import logfire
 from langchain_openai import ChatOpenAI
-from langchain_core.globals import set_llm_cache
-from langchain_redis import RedisSemanticCache
 from portkey_ai import PORTKEY_GATEWAY_URL, createHeaders
 
 from src.config import get_settings
-from src.embeddings import get_dense_embeddings
 
 settings = get_settings()
-
-# --- Configure LLM Cache ---
-try:
-    logfire.info("Setting up RedisSemanticCache for LLM...", redis_url=settings.redis_url)
-    dense_embeddings = get_dense_embeddings()
-    set_llm_cache(
-        RedisSemanticCache(
-            embeddings=dense_embeddings,
-            redis_url=settings.redis_url,
-            distance_threshold=settings.cache_distance_threshold,
-            ttl=settings.cache_ttl_seconds,
-        )
-    )
-    logfire.info("RedisSemanticCache set up successfully.")
-except Exception as e:
-    logfire.error("Failed to initialize RedisSemanticCache", error=str(e))
 
 
 @lru_cache

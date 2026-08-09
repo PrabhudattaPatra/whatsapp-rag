@@ -6,11 +6,16 @@ from pydantic import BaseModel, Field
 from langchain_core.tools import tool
 from langchain_groq import ChatGroq
 from qdrant_client import models
-from langchain_classic.retrievers.contextual_compression import ContextualCompressionRetriever
 
-from src.config import settings, qdrant_client, dense_embeddings
+from src.config import get_settings
+from src.vector_store.qdrant_client import get_qdrant_client
+from src.embeddings import get_dense_embeddings
 from src.retrieval.reranker import rerank_documents
 from langchain_qdrant import QdrantVectorStore, RetrievalMode
+
+settings = get_settings()
+qdrant_client = get_qdrant_client()
+dense_embeddings = get_dense_embeddings()
 
 # --- 1. Query Classifier ---
 class QueryCategory(BaseModel):
@@ -19,7 +24,7 @@ class QueryCategory(BaseModel):
     )
 
 def get_classifier():
-    llm = ChatGroq(model=settings.GROQ_MODEL, temperature=0, api_key=settings.GROQ_API_KEY)
+    llm = ChatGroq(model=settings.groq_model, temperature=0, api_key=settings.groq_api_key)
     return llm.with_structured_output(QueryCategory)
 
 # --- 2. Text Retrieval Tool ---
@@ -27,7 +32,8 @@ def get_classifier():
 def classify_and_retrieve(query: str) -> str:
     """Retrieve relevant college information for a student or parent query."""
     logfire.info("🔍 [Tool] classify_and_retrieve triggered", query=query)
-    
+    print(f"\n[DEBUG] classify_and_retrieve called with query: '{query}'")
+
     try:
         # Classify
         classifier = get_classifier()
@@ -37,11 +43,12 @@ def classify_and_retrieve(query: str) -> str:
         ])
         doc_type = result.doc_type
         logfire.info(f"🏷️ Classified as: {doc_type}")
+        print(f"[DEBUG] Classified as: {doc_type}")
 
         # Retrieve
         vectorstore = QdrantVectorStore(
             client=qdrant_client,
-            collection_name=settings.QDRANT_COLLECTION,
+            collection_name=settings.qdrant_text_collection,
             embedding=dense_embeddings,
             retrieval_mode=RetrievalMode.DENSE,
             vector_name="dense",

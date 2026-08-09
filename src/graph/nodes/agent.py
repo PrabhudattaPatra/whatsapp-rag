@@ -46,7 +46,7 @@ def build_recent_history_text(messages: list, max_turns: int = 4) -> str:
 async def generate_query_or_respond(state: AgentState):
     """
     Call the model to generate a response or call a retrieval tool.
-    Pre-processes context via recent message formatting before calling the guarded model.
+    Passes the conversation history directly to the LLM without text manipulation.
     """
     logfire.info("🤖 [Node] generate_query_or_respond")
     messages = convert_to_messages(state["messages"])
@@ -54,24 +54,10 @@ async def generate_query_or_respond(state: AgentState):
     if not messages:
         return {"messages": []}
 
-    last_msg = messages[-1]
-    
-    # Build context from recent messages if history exists
-    if len(messages) > 1:
-        history_text = build_recent_history_text(messages)
-        combined_content = (
-            f"Recent conversation context:\n{history_text}\n\n"
-            f"Current user message: {last_msg.content}"
-        )
-    else:
-        combined_content = last_msg.content
+    # Pass all messages as-is to the guarded model
+    # The LLM understands message arrays natively and will use the latest user message for tool calls
+    response = await guarded_response_model.ainvoke(messages)
 
-    # Replace only the last message for the LLM/Guardrails call
-    guardrails_messages = messages[:-1] + [HumanMessage(content=combined_content)]
-
-    # Invoke guarded model
-    response = await guarded_response_model.ainvoke(guardrails_messages)
-    
     # Initialize image_offsets if not already present
     image_offsets = state.get("image_offsets") or {}
 

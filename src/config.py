@@ -69,6 +69,10 @@ class Settings(BaseSettings):
     rerank_model: str = "rerank-english-v3.0"
     rerank_top_n: int = 3
 
+    # --- Groq (query classifier) ---
+    groq_api_key: str
+    groq_model: str = "llama-3.3-70b-versatile"
+
     # --- Portkey gateway (response LLM routing) ---
     portkey_api_key: str
     portkey_response_config: str = "pc-respon-d7d917"
