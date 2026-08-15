@@ -1,5 +1,6 @@
 from typing_extensions import Annotated, TypedDict
-from langchain_openai import ChatOpenAI
+
+from src.generation.llm import get_grader_llm
 # Grade output schema
 class GroundedGrade(TypedDict):
     explanation: Annotated[str, ..., "Explain your reasoning for the score"]
@@ -18,7 +19,7 @@ A grounded value of False means that the student's answer does not meet all of t
 Explain your reasoning in a step-by-step manner to ensure your reasoning and conclusion are correct. Avoid simply stating the correct answer at the outset."""
 
 # Grader LLM
-grounded_llm = ChatOpenAI(model="gpt-4o", temperature=0).with_structured_output(
+grounded_llm = get_grader_llm().with_structured_output(
     GroundedGrade, method="json_schema", strict=True
 )
 

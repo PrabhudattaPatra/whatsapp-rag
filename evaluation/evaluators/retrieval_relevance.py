@@ -1,5 +1,6 @@
 from typing_extensions import Annotated, TypedDict
-from langchain_openai import ChatOpenAI
+
+from src.generation.llm import get_grader_llm
 
 # Grade output schema
 class RetrievalRelevanceGrade(TypedDict):
@@ -23,9 +24,9 @@ A relevance value of False means that the FACTS are completely unrelated to the 
 Explain your reasoning in a step-by-step manner to ensure your reasoning and conclusion are correct. Avoid simply stating the correct answer at the outset."""
 
 # Grader LLM
-retrieval_relevance_llm = ChatOpenAI(
-    model="gpt-4o", temperature=0
-).with_structured_output(RetrievalRelevanceGrade, method="json_schema", strict=True)
+retrieval_relevance_llm = get_grader_llm().with_structured_output(
+    RetrievalRelevanceGrade, method="json_schema", strict=True
+)
 
 def retrieval_relevance(inputs: dict, outputs: dict) -> bool:
     """

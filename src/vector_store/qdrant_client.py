@@ -18,7 +18,14 @@ from functools import lru_cache
 
 import logfire
 from qdrant_client import QdrantClient, models
-from qdrant_client.http.models import Distance, SparseVectorParams, VectorParams
+from qdrant_client.http.models import (
+    Distance,
+    SparseVectorParams,
+    TurboQuantBitSize,
+    TurboQuantization,
+    TurboQuantQuantizationConfig,
+    VectorParams,
+)
 from langchain_qdrant import QdrantVectorStore, RetrievalMode
 
 from src.config import get_settings
@@ -37,7 +44,9 @@ def get_qdrant_client() -> QdrantClient:
 
 
 @logfire.instrument("ensure_qdrant_collection", extract_args=True)
-def ensure_collection(collection_name: str, with_sparse: bool) -> None:
+def ensure_collection(
+    collection_name: str, with_sparse: bool, with_turboquant: bool = False
+) -> None:
     """
     Create the collection if it doesn't already exist. Idempotent — safe
     to call on every startup, since it's a no-op once the collection exists.
@@ -47,6 +56,18 @@ def ensure_collection(collection_name: str, with_sparse: bool) -> None:
         with_sparse: Whether to also configure a sparse ("sparse") vector
             field alongside the dense one — True for the hybrid text
             collection, False for the dense-only image collection.
+        with_turboquant: Whether to enable TurboQuant (4-bit) quantization
+            on the "dense" vector (Qdrant 1.18+). Only used for fresh
+            `create_collection` calls -- it does NOT retroactively apply to
+            an already-existing collection (Qdrant has no "recreate on
+            config drift" behavior, and we don't want this function
+            silently re-indexing production data on every startup). On
+            `my_documents`, this was originally turned on out-of-band via
+            a one-off `update_collection` call; this flag just makes a
+            from-scratch recreation (fresh environment, disaster recovery)
+            reproduce that instead of silently losing it. 4-bit chosen over
+            2-bit/1-bit for best recall, since this collection feeds real
+            answers about fees/admissions/exams.
     """
     client = get_qdrant_client()
     if client.collection_exists(collection_name):
@@ -58,10 +79,20 @@ def ensure_collection(collection_name: str, with_sparse: bool) -> None:
             "sparse": SparseVectorParams(index=models.SparseIndexParams(on_disk=False))
         }
 
+    quantization_config = None
+    if with_turboquant:
+        quantization_config = TurboQuantization(
+            turbo=TurboQuantQuantizationConfig(bits=TurboQuantBitSize.BITS4)
+        )
+
     client.create_collection(
         collection_name=collection_name,
         vectors_config={
-            "dense": VectorParams(size=settings.embedding_dimensions, distance=Distance.COSINE)
+            "dense": VectorParams(
+                size=settings.embedding_dimensions,
+                distance=Distance.COSINE,
+                quantization_config=quantization_config,
+            )
         },
         sparse_vectors_config=sparse_vectors_config,
     )
@@ -100,7 +131,7 @@ def get_text_vector_store() -> QdrantVectorStore:
     Hybrid (dense + sparse/BM25) vector store for text documents
     (faq, fee_structure, notice_board, examination_cell).
     """
-    ensure_collection(settings.qdrant_text_collection, with_sparse=True)
+    ensure_collection(settings.qdrant_text_collection, with_sparse=True, with_turboquant=True)
     return QdrantVectorStore(
         client=get_qdrant_client(),
         collection_name=settings.qdrant_text_collection,

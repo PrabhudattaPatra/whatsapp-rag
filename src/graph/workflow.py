@@ -27,6 +27,7 @@ from src.graph.nodes import (
     rewrite_question,
     generate_answer,
 )
+from src.graph.timing import time_node
 from src.retrieval.tools import classify_and_retrieve, get_college_images
 from src.graph.checkpointer import get_checkpointer
 
@@ -45,8 +46,17 @@ def build_workflow() -> StateGraph:
     workflow = StateGraph(AgentState)
 
     # --- Nodes ---
+    # retrieve is a prebuilt ToolNode (not one of our own node functions),
+    # so it can't be decorated with @time_node like the others — wrap it in
+    # a thin passthrough instead, purely for timing, behavior unchanged.
+    tool_node = ToolNode([classify_and_retrieve, get_college_images])
+
+    @time_node("retrieve")
+    async def retrieve(state: AgentState):
+        return await tool_node.ainvoke(state)
+
     workflow.add_node("agent", generate_query_or_respond)
-    workflow.add_node("retrieve", ToolNode([classify_and_retrieve, get_college_images]))
+    workflow.add_node("retrieve", retrieve)
     workflow.add_node("rewrite", rewrite_question)
     workflow.add_node("generate", generate_answer)
 

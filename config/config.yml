@@ -21,6 +21,13 @@ rails:
       api_key_env_var: NVIDIA_API_KEY
 
   input:
+    # These three checks are independent (none needs another's result), so
+    # run them concurrently instead of one-at-a-time -- NeMo's native
+    # parallel executor (nemoguardrails/colang/v1_0/runtime/runtime.py,
+    # _run_flows_in_parallel) handles per-flow params, fail-fast
+    # cancellation, and event-history merging, so total input-rail latency
+    # becomes the slowest single check instead of the sum of all three.
+    parallel: true
     flows:
       - jailbreak detection model
       - content safety check input $model=content_safety

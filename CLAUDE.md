@@ -1,11 +1,11 @@
 # WhatsApp RAG Project
 
-A Retrieval-Augmented Generation (RAG) system built with LangChain and LangGraph for answering queries about CGU (Centurion University of Technology and Management) using WhatsApp chat data, PDFs, images, and web scraping.
+A Retrieval-Augmented Generation (RAG) system built with LangChain and LangGraph for answering queries about C.V. Raman Global University, Bhubaneswar, Odisha, using WhatsApp chat data, PDFs, images, and web scraping.
 
 ## Project Overview
 
-- **Purpose**: RAG pipeline with multi-modal support (text, images), semantic caching, guardrails, and conversational memory
-- **Tech Stack**: LangChain, LangGraph, FastAPI, Qdrant (vector store), Redis (cache), PostgreSQL (checkpointer), Fireworks (embeddings), Cohere (reranking), Portkey (LLM gateway), NeMo Guardrails, Logfire (observability)
+- **Purpose**: RAG pipeline with multi-modal support (text, images), guardrails, and conversational memory
+- **Tech Stack**: LangChain, LangGraph, FastAPI, Qdrant (vector store), Redis (image docstore), PostgreSQL (checkpointer), Fireworks (embeddings), Cohere (reranking), Portkey (LLM gateway), NeMo Guardrails, Logfire (observability)
 - **Python Version**: 3.13
 
 ## Project Structure
@@ -21,11 +21,14 @@ whatsapp-rag/
 │   ├── ingestion/             # PDF/image processing, web scraping
 │   ├── retrieval/             # Hybrid retrieval, reranking, semantic cache
 │   └── vector_store/          # Qdrant client setup
-├── api/                       # FastAPI endpoints (placeholder)
+├── api/                       # FastAPI chat API (api/main.py) — CORS-enabled, runs standalone
+├── frontend/                  # Static chat UI (frontend/index.html) — runs standalone, calls the API cross-origin
 ├── scripts/
 │   ├── run_ingestion.py       # Ingest documents into Qdrant
 │   ├── ingest_dynamic.py      # Dynamic web scraping ingestion
-│   └── index_images.py        # Index images separately
+│   ├── index_images.py        # Index images separately
+│   ├── run_api.py             # Start the FastAPI chat API (Windows-safe event loop)
+│   └── run_frontend.py        # Start the static frontend's own dev server
 ├── config/
 │   ├── config.yml             # NeMo Guardrails config
 │   └── prompts.yml            # Guardrails prompts
@@ -58,8 +61,13 @@ pip install -r requirements.txt
 # Run ingestion pipeline
 python scripts/run_ingestion.py
 
-# Start FastAPI server (when implemented)
-uvicorn api.main:app --reload
+# Start the FastAPI chat API (NOT `uvicorn api.main:app` directly on
+# Windows — see scripts/run_api.py's docstring: psycopg needs a
+# SelectorEventLoop forced before uvicorn picks its own loop class)
+uv run python -m scripts.run_api      # http://localhost:8000
+
+# In a second terminal, start the frontend
+uv run python -m scripts.run_frontend # http://localhost:5500
 ```
 
 ### Testing
@@ -127,10 +135,6 @@ settings.qdrant_url        # Type-safe access
 - **Qdrant**: Two collections (`my_documents` for text, `image_documents` for images)
 - **Indexing**: Run `scripts/run_ingestion.py` to populate
 
-### Semantic Cache
-- **Redis**: Caches similar queries within 0.2 distance threshold
-- **TTL**: 3600 seconds (1 hour)
-
 ### LLM Routing
 - **Portkey**: Gateway for response generation with fallback/load balancing
 - **Models**: Configured via Portkey config IDs
@@ -180,13 +184,22 @@ settings.qdrant_url        # Type-safe access
 - **PDFs**: Extracted using Gemini API for markdown conversion
 - **Images**: Indexed separately with multimodal embeddings
 
+## Chat API & Frontend
+
+Two independent services, not a monolith — the API has no knowledge of the frontend and vice versa, only a CORS allow-list connects them.
+
+- **API** (`api/main.py`, port 8000): exposes `POST /api/chat` (`{message, session_id}` → `{reply, session_id}`) wired directly to the LangGraph agent, plus `GET /api/health`. `FRONTEND_ORIGINS` in that file is the CORS allow-list — add to it if the frontend is ever served from somewhere other than `scripts/run_frontend.py`'s default.
+- **Frontend** (`frontend/index.html`, port 5500 via `scripts/run_frontend.py`): a single-file vanilla JS chat UI with no build step. `API_BASE` at the top of its `<script>` points at the API's URL — update it if the API moves (e.g. once deployed). It generates a `session_id` client-side on first use and keeps it in `localStorage`, so a returning browser tab continues the same conversation.
+- Each `session_id` is used as the LangGraph `thread_id`, giving every browser session persistent, per-session conversation memory in Postgres.
+- Run locally: `uv run python -m scripts.run_api` and, separately, `uv run python -m scripts.run_frontend`, then open `http://localhost:5500/`.
+
 ## Known Issues / TODOs
 
-- FastAPI endpoints in `api/` are placeholders
-- Image retrieval needs multimodal embedding support fully integrated
+- Image retrieval (`get_college_images` in `src/retrieval/tools.py`) is now wired end-to-end: it embeds the query, matches it against the 5 indexed category captions in the `image_documents` Qdrant collection, looks up that category's file paths in the Redis docstore, and returns them as `/media/...` URLs served by a `StaticFiles` mount in `api/main.py` (`IMAGES_DIR` = the project's `images/` folder). Note this matches category *captions* with text embeddings, not true multimodal (e.g. CLIP) image embeddings — good enough for 5 fixed categories, but won't scale to open-ended per-image search.
 - Consider adding rate limiting for LLM calls
 - Add more comprehensive error handling in graph nodes
+- No semantic response caching yet — `src/generation/llm.py` explicitly processes every query fresh; Redis is only used as the image docstore (`src/vector_store/redis_store.py`). A `RedisSemanticCache` was planned but never wired in.
 
 ---
 
-**Last Updated**: 2026-08-09
+**Last Updated**: 2026-08-14

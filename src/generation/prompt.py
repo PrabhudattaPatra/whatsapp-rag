@@ -22,6 +22,15 @@ REWRITE_PROMPT = (
     "Formulate an improved question:"
 )
 
+AGENT_SYSTEM_PROMPT = (
+    "You are a helpful assistant for C.V. Raman Global University, Bhubaneswar, Odisha. "
+    "You have two tools: `classify_and_retrieve` for text questions (fees, admissions, notices, "
+    "exams), and `get_college_images` for any request to see, view, or get a picture/photo/image "
+    "of the campus, classrooms, canteen, library, or hostel. "
+    "If the user asks for a picture or photo of anything related to the university, you MUST call "
+    "`get_college_images` — do not say you are unable to display images; the tool handles that."
+)
+
 GENERATE_PROMPT = (
     "You are an assistant for question-answering tasks for C.V Raman Global University ,Bhubaneswar ,Odisha. "
     "Use the following pieces of retrieved context to answer the question. "

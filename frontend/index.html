@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CGU Assistant</title>
+<style>
+  :root {
+    --bg: #f4f5f7;
+    --surface: #ffffff;
+    --border: #dfe3e8;
+    --text: #1c2024;
+    --muted: #6b7280;
+    --accent: #2f6f63;
+    --accent-ink: #ffffff;
+    --bubble-user: #2f6f63;
+    --bubble-user-ink: #ffffff;
+    --bubble-bot: #ffffff;
+    --bubble-bot-ink: #1c2024;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14181a;
+      --surface: #1b2023;
+      --border: #2a3033;
+      --text: #e7ebe6;
+      --muted: #9aa3ab;
+      --accent: #5fb3a1;
+      --accent-ink: #0c1211;
+      --bubble-user: #5fb3a1;
+      --bubble-user-ink: #0c1211;
+      --bubble-bot: #1b2023;
+      --bubble-bot-ink: #e7ebe6;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+  }
+
+  header h1 {
+    font-size: 1.05rem;
+    margin: 0;
+  }
+
+  header span {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  #new-chat-btn {
+    margin-left: auto;
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--border);
+    font-weight: 600;
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  #new-chat-btn:hover {
+    border-color: var(--accent);
+  }
+
+  main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem 1rem 1rem;
+  }
+
+  #messages {
+    max-width: 42rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .row {
+    display: flex;
+  }
+
+  .row.user { justify-content: flex-end; }
+  .row.bot { justify-content: flex-start; }
+
+  .bubble {
+    max-width: 78%;
+    padding: 0.6rem 0.9rem;
+    border-radius: 14px;
+    line-height: 1.5;
+    font-size: 0.95rem;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  .row.user .bubble {
+    background: var(--bubble-user);
+    color: var(--bubble-user-ink);
+    border-bottom-right-radius: 4px;
+  }
+
+  .row.bot .bubble {
+    background: var(--bubble-bot);
+    color: var(--bubble-bot-ink);
+    border: 1px solid var(--border);
+    border-bottom-left-radius: 4px;
+  }
+
+  .row.bot .bubble.error {
+    border-color: #c0392b;
+    color: #c0392b;
+  }
+
+  .image-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+  }
+
+  .image-grid img {
+    width: 100%;
+    height: 8rem;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+
+  .typing {
+    display: inline-flex;
+    gap: 0.25rem;
+    align-items: center;
+  }
+
+  .typing span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--muted);
+    animation: bounce 1.2s infinite ease-in-out;
+  }
+
+  .typing span:nth-child(2) { animation-delay: 0.15s; }
+  .typing span:nth-child(3) { animation-delay: 0.3s; }
+
+  @keyframes bounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+    30% { transform: translateY(-4px); opacity: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .typing span { animation: none; }
+  }
+
+  form {
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    padding: 0.85rem 1rem;
+  }
+
+  .composer {
+    max-width: 42rem;
+    margin: 0 auto;
+    display: flex;
+    gap: 0.6rem;
+  }
+
+  #input {
+    flex: 1;
+    resize: none;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.6rem 0.8rem;
+    font: inherit;
+    font-size: 0.95rem;
+    background: var(--bg);
+    color: var(--text);
+    max-height: 8rem;
+  }
+
+  #input:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  button {
+    border: none;
+    border-radius: 10px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font: inherit;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0 1.1rem;
+    cursor: pointer;
+  }
+
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>CGU Assistant</h1>
+  <span>Ask about admissions, fees, notices, or exams</span>
+  <button type="button" id="new-chat-btn">New chat</button>
+</header>
+
+<main>
+  <div id="messages"></div>
+</main>
+
+<form id="composer-form">
+  <div class="composer">
+    <textarea id="input" rows="1" placeholder="Ask a question…" autofocus></textarea>
+    <button type="submit" id="send-btn">Send</button>
+  </div>
+</form>
+
+<script>
+  const messagesEl = document.getElementById("messages");
+  const form = document.getElementById("composer-form");
+  const input = document.getElementById("input");
+  const sendBtn = document.getElementById("send-btn");
+  const newChatBtn = document.getElementById("new-chat-btn");
+
+  const GREETING = "Hi! I can answer questions about CGU admissions, fees, notices, and exams. What would you like to know?";
+
+  // The API now runs as a separate service on its own port — see
+  // scripts/run_api.py. Point this at wherever that's actually reachable
+  // (e.g. change it before deploying the frontend somewhere else).
+  const API_BASE = "http://localhost:8000";
+
+  const SESSION_KEY = "cgu_chat_session_id";
+  let sessionId = localStorage.getItem(SESSION_KEY) || null;
+
+  function renderImages(bubble, images) {
+    if (!images || !images.length) return;
+    const grid = document.createElement("div");
+    grid.className = "image-grid";
+    images.forEach((src) => {
+      const img = document.createElement("img");
+      img.src = API_BASE + src;
+      img.alt = "CGU campus photo";
+      img.loading = "lazy";
+      grid.appendChild(img);
+    });
+    bubble.appendChild(grid);
+  }
+
+  function addBubble(role, text, isError, images) {
+    const row = document.createElement("div");
+    row.className = "row " + role;
+    const bubble = document.createElement("div");
+    bubble.className = "bubble" + (isError ? " error" : "");
+
+    // Always create the text node (even empty) so a streaming reply can
+    // grow this element's textContent in place — see sendMessage().
+    const textEl = document.createElement("div");
+    textEl.textContent = text || "";
+    bubble.appendChild(textEl);
+
+    renderImages(bubble, images);
+
+    row.appendChild(bubble);
+    messagesEl.appendChild(row);
+    row.scrollIntoView({ behavior: "smooth", block: "end" });
+    return bubble;
+  }
+
+  function addTypingBubble() {
+    const row = document.createElement("div");
+    row.className = "row bot";
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+    bubble.innerHTML = '<span class="typing"><span></span><span></span><span></span></span>';
+    row.appendChild(bubble);
+    messagesEl.appendChild(row);
+    row.scrollIntoView({ behavior: "smooth", block: "end" });
+    return row;
+  }
+
+  async function sendMessage(text) {
+    addBubble("user", text);
+    input.value = "";
+    input.style.height = "auto";
+    sendBtn.disabled = true;
+
+    const typingRow = addTypingBubble();
+    // Bot bubble is created lazily — either when the first token arrives,
+    // or (for non-streamed replies: image results, direct agent answers)
+    // when the final "done" event arrives with nothing streamed before it.
+    let botBubble = null;
+    let streamedText = "";
+
+    try {
+      const res = await fetch(API_BASE + "/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text, session_id: sessionId }),
+      });
+
+      if (!res.ok || !res.body) {
+        throw new Error("Request failed with status " + res.status);
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        // SSE frames are separated by a blank line.
+        let sep;
+        while ((sep = buffer.indexOf("\n\n")) !== -1) {
+          const frame = buffer.slice(0, sep);
+          buffer = buffer.slice(sep + 2);
+          if (!frame.startsWith("data: ")) continue;
+          const payload = JSON.parse(frame.slice(6));
+
+          if (payload.type === "token") {
+            if (!botBubble) {
+              typingRow.remove();
+              botBubble = addBubble("bot", "");
+            }
+            streamedText += payload.content;
+            botBubble.firstChild.textContent = streamedText;
+            botBubble.parentElement.scrollIntoView({ behavior: "smooth", block: "end" });
+          } else if (payload.type === "done") {
+            sessionId = payload.session_id;
+            localStorage.setItem(SESSION_KEY, sessionId);
+            if (!botBubble) {
+              typingRow.remove();
+              botBubble = addBubble("bot", "");
+            }
+            // Authoritative final text — overwrites whatever streamed in,
+            // which also covers replies that never streamed at all (image
+            // results, or the agent answering directly without retrieval).
+            botBubble.firstChild.textContent = payload.reply;
+            renderImages(botBubble, payload.images);
+          } else if (payload.type === "error") {
+            typingRow.remove();
+            if (botBubble) botBubble.parentElement.remove();
+            addBubble("bot", payload.message, true);
+          }
+        }
+      }
+    } catch (err) {
+      typingRow.remove();
+      if (botBubble) botBubble.parentElement.remove();
+      addBubble("bot", "Something went wrong reaching the assistant. Please try again.", true);
+    } finally {
+      sendBtn.disabled = false;
+      input.focus();
+    }
+  }
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const text = input.value.trim();
+    if (!text) return;
+    sendMessage(text);
+  });
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      form.requestSubmit();
+    }
+  });
+
+  input.addEventListener("input", () => {
+    input.style.height = "auto";
+    input.style.height = Math.min(input.scrollHeight, 128) + "px";
+  });
+
+  newChatBtn.addEventListener("click", () => {
+    // Drop the stored session_id so the next message starts a brand-new
+    // LangGraph thread_id server-side, instead of continuing to append to
+    // whatever conversation was in localStorage.
+    localStorage.removeItem(SESSION_KEY);
+    sessionId = null;
+    messagesEl.innerHTML = "";
+    addBubble("bot", GREETING);
+    input.focus();
+  });
+
+  addBubble("bot", GREETING);
+</script>
+
+</body>
+</html>

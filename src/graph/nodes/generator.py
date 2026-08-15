@@ -8,11 +8,14 @@ from langchain_core.messages import AIMessage
 
 from src.generation.llm import get_response_llm
 from src.generation.prompt import GENERATE_PROMPT
+from src.graph.message_utils import get_current_question
 from src.graph.state import AgentState
+from src.graph.timing import time_node
 
 
+@time_node("generate")
 @logfire.instrument("generate_answer_node")
-def generate_answer(state: AgentState):
+async def generate_answer(state: AgentState):
     """
     Generate an answer from the user question and the retrieved context.
     If the last tool call retrieved images, handles formatting rather than calling the LLM.
@@ -45,15 +48,24 @@ def generate_answer(state: AgentState):
         }
 
     # Normal text-based answer generation
-    question = state["messages"][0].content
+    question = get_current_question(state["messages"])
     context = last_message.content
     prompt = GENERATE_PROMPT.format(question=question, context=context)
     
     try:
         llm = get_response_llm()
-        response = llm.invoke([{"role": "user", "content": prompt}])
+        # Stream instead of .invoke() — this is what lets LangGraph's
+        # stream_mode="messages" surface individual token chunks (tagged
+        # with this node's name) to api/main.py, instead of the API only
+        # being able to hand the frontend one big blob once the whole
+        # answer is done.
+        chunk = None
+        async for piece in llm.astream([{"role": "user", "content": prompt}]):
+            chunk = piece if chunk is None else chunk + piece
+        if chunk is None:
+            raise ValueError("LLM stream produced no chunks")
         logfire.info("Answer generated successfully")
-        return {"messages": [response]}
+        return {"messages": [chunk]}
     except Exception as e:
         logfire.error("Answer generation failed", error=str(e))
         return {
