@@ -15,20 +15,7 @@ A Retrieval-Augmented Generation (RAG) chatbot for **C. V. Raman Global Universi
 
 ## Architecture
 
-```
-User message
-   │
-   ▼
-┌─────────────┐   tool call?   ┌──────────┐   relevant?   ┌──────────┐
-│   agent     │ ─────────────▶ │ retrieve │ ────────────▶ │ generate │ ──▶ END
-│ (guardrails │                │ (Qdrant +│                └──────────┘
-│  + routing) │                │  Cohere) │       │ not relevant
-└─────────────┘ ◀───────────── └──────────┘       ▼
-      ▲          no tool call          ┌──────────┐
-      │                                │ rewrite  │
-      └────────────────────────────────┘ question │
-                                        └──────────┘
-```
+![Architecture diagram](image.png)
 
 - **`agent`** (`src/graph/nodes/agent.py`) — wraps the response LLM in NeMo Guardrails (`RunnableRails`), decides whether to answer directly or call a retrieval tool.
 - **`retrieve`** — a LangGraph `ToolNode` running `classify_and_retrieve` (hybrid Qdrant search + Cohere rerank) or `get_college_images` (`src/retrieval/tools.py`).

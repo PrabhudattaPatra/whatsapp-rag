@@ -1,0 +1,971 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "mcp-excalidraw-server",
+  "elements": [
+    {
+      "id": "browser",
+      "type": "rectangle",
+      "x": 60,
+      "y": 60,
+      "width": 220,
+      "height": 70,
+      "backgroundColor": "#a5d8ff",
+      "strokeColor": "#1971c2",
+      "label": {
+        "text": "Browser Frontend\n(static, :5500)"
+      },
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:51:25.609Z",
+      "updatedAt": "2026-08-15T14:51:25.609Z",
+      "version": 1
+    },
+    {
+      "id": "api",
+      "type": "rectangle",
+      "x": 380,
+      "y": 60,
+      "width": 280,
+      "height": 70,
+      "backgroundColor": "#a5d8ff",
+      "strokeColor": "#1971c2",
+      "label": {
+        "text": "FastAPI Chat API\n(/api/chat SSE, :8000)"
+      },
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:51:25.609Z",
+      "updatedAt": "2026-08-15T14:51:25.609Z",
+      "version": 1
+    },
+    {
+      "id": "msuhuo96rr4j328kwq",
+      "type": "arrow",
+      "x": 288,
+      "y": 95,
+      "label": {
+        "text": "chat"
+      },
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          84,
+          1.4210854715202004e-14
+        ]
+      ],
+      "start": {
+        "id": "browser"
+      },
+      "end": {
+        "id": "api"
+      },
+      "createdAt": "2026-08-15T14:51:25.609Z",
+      "updatedAt": "2026-08-15T14:51:25.609Z",
+      "version": 1
+    },
+    {
+      "id": "graph-zone",
+      "type": "rectangle",
+      "x": 60,
+      "y": 220,
+      "width": 1080,
+      "height": 380,
+      "backgroundColor": "#e9ecef",
+      "strokeColor": "#868e96",
+      "strokeStyle": "dashed",
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:51:25.609Z",
+      "updatedAt": "2026-08-15T14:51:25.609Z",
+      "version": 1
+    },
+    {
+      "id": "graph-zone-label",
+      "type": "text",
+      "x": 80,
+      "y": 232,
+      "width": 500,
+      "height": 26,
+      "text": "LangGraph Agent Workflow (src/graph/)",
+      "fontSize": 18,
+      "createdAt": "2026-08-15T14:51:25.609Z",
+      "updatedAt": "2026-08-15T14:51:25.609Z",
+      "version": 1
+    },
+    {
+      "id": "agent",
+      "type": "rectangle",
+      "x": 110,
+      "y": 330,
+      "width": 200,
+      "height": 70,
+      "backgroundColor": "#a5d8ff",
+      "strokeColor": "#1971c2",
+      "label": {
+        "text": "agent\n(guardrails + routing)"
+      },
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:51:25.609Z",
+      "updatedAt": "2026-08-15T14:51:25.609Z",
+      "version": 1
+    },
+    {
+      "id": "retrieve",
+      "type": "rectangle",
+      "x": 400,
+      "y": 330,
+      "width": 200,
+      "height": 70,
+      "backgroundColor": "#99e9f2",
+      "strokeColor": "#0c8599",
+      "label": {
+        "text": "retrieve\n(ToolNode)"
+      },
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:51:25.610Z",
+      "updatedAt": "2026-08-15T14:51:25.610Z",
+      "version": 1
+    },
+    {
+      "id": "grade",
+      "type": "rectangle",
+      "x": 690,
+      "y": 330,
+      "width": 220,
+      "height": 70,
+      "backgroundColor": "#ffd8a8",
+      "strokeColor": "#e8590c",
+      "label": {
+        "text": "grade_documents\n(relevance check)"
+      },
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:51:25.610Z",
+      "updatedAt": "2026-08-15T14:51:25.610Z",
+      "version": 1
+    },
+    {
+      "id": "rewrite",
+      "type": "rectangle",
+      "x": 400,
+      "y": 470,
+      "width": 200,
+      "height": 70,
+      "backgroundColor": "#eebefa",
+      "strokeColor": "#9c36b5",
+      "label": {
+        "text": "rewrite\n(reformulate query)"
+      },
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:51:25.610Z",
+      "updatedAt": "2026-08-15T14:51:25.610Z",
+      "version": 1
+    },
+    {
+      "id": "generate",
+      "type": "rectangle",
+      "x": 690,
+      "y": 470,
+      "width": 220,
+      "height": 70,
+      "backgroundColor": "#a5d8ff",
+      "strokeColor": "#1971c2",
+      "label": {
+        "text": "generate\n(stream answer)"
+      },
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:51:25.610Z",
+      "updatedAt": "2026-08-15T14:51:25.610Z",
+      "version": 1
+    },
+    {
+      "id": "end-node",
+      "type": "ellipse",
+      "x": 980,
+      "y": 450,
+      "width": 110,
+      "height": 90,
+      "backgroundColor": "#b2f2bb",
+      "strokeColor": "#2f9e44",
+      "label": {
+        "text": "END"
+      },
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:51:25.610Z",
+      "updatedAt": "2026-08-15T14:51:25.610Z",
+      "version": 1
+    },
+    {
+      "id": "msuhuo96wgnd9pq6jd",
+      "type": "arrow",
+      "x": 318,
+      "y": 365,
+      "label": {
+        "text": "tool call"
+      },
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          74,
+          0
+        ]
+      ],
+      "start": {
+        "id": "agent"
+      },
+      "end": {
+        "id": "retrieve"
+      },
+      "createdAt": "2026-08-15T14:51:25.610Z",
+      "updatedAt": "2026-08-15T14:51:25.610Z",
+      "version": 1
+    },
+    {
+      "id": "msuhuo96h6isdpw0t1",
+      "type": "arrow",
+      "x": 608,
+      "y": 365,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          74,
+          0
+        ]
+      ],
+      "start": {
+        "id": "retrieve"
+      },
+      "end": {
+        "id": "grade"
+      },
+      "createdAt": "2026-08-15T14:51:25.610Z",
+      "updatedAt": "2026-08-15T14:51:25.610Z",
+      "version": 1
+    },
+    {
+      "id": "msuhuo960l04f573fexb",
+      "type": "arrow",
+      "x": 800,
+      "y": 408,
+      "label": {
+        "text": "relevant"
+      },
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          54
+        ]
+      ],
+      "start": {
+        "id": "grade"
+      },
+      "end": {
+        "id": "generate"
+      },
+      "createdAt": "2026-08-15T14:51:25.610Z",
+      "updatedAt": "2026-08-15T14:51:25.610Z",
+      "version": 1
+    },
+    {
+      "id": "msuhuo9644arg7n0ara",
+      "type": "arrow",
+      "x": 717.7505348800379,
+      "y": 403.383083722649,
+      "label": {
+        "text": "not relevant"
+      },
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -135.50106976007578,
+          63.23383255470196
+        ]
+      ],
+      "start": {
+        "id": "grade"
+      },
+      "end": {
+        "id": "rewrite"
+      },
+      "createdAt": "2026-08-15T14:51:25.610Z",
+      "updatedAt": "2026-08-15T14:51:25.610Z",
+      "version": 1
+    },
+    {
+      "id": "msuhuo960ma3zonx8w9n",
+      "type": "arrow",
+      "x": 420.29558690908345,
+      "y": 466.5220074733506,
+      "label": {
+        "text": "loop"
+      },
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -130.59117381816685,
+          -63.04401494670117
+        ]
+      ],
+      "start": {
+        "id": "rewrite"
+      },
+      "end": {
+        "id": "agent"
+      },
+      "createdAt": "2026-08-15T14:51:25.610Z",
+      "updatedAt": "2026-08-15T14:51:25.610Z",
+      "version": 1
+    },
+    {
+      "id": "msuhuo96z43oy7d413",
+      "type": "arrow",
+      "x": 917.9905601791651,
+      "y": 499.9306286366466,
+      "label": {
+        "text": "answer"
+      },
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          54.0686084040982,
+          -2.6289460890063197
+        ]
+      ],
+      "start": {
+        "id": "generate"
+      },
+      "end": {
+        "id": "end-node"
+      },
+      "createdAt": "2026-08-15T14:51:25.610Z",
+      "updatedAt": "2026-08-15T14:51:25.610Z",
+      "version": 1
+    },
+    {
+      "id": "msuhuo96sbxupt65sbl",
+      "type": "arrow",
+      "x": 210,
+      "y": 330,
+      "strokeStyle": "dashed",
+      "label": {
+        "text": "direct"
+      },
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          -50
+        ],
+        [
+          825,
+          -50
+        ],
+        [
+          825,
+          120
+        ]
+      ],
+      "elbowed": true,
+      "createdAt": "2026-08-15T14:51:25.610Z",
+      "updatedAt": "2026-08-15T14:51:25.610Z",
+      "version": 1
+    },
+    {
+      "id": "guard-zone",
+      "type": "rectangle",
+      "x": 60,
+      "y": 650,
+      "width": 560,
+      "height": 180,
+      "backgroundColor": "#e9ecef",
+      "strokeColor": "#868e96",
+      "strokeStyle": "dashed",
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:52:05.924Z",
+      "updatedAt": "2026-08-15T14:52:05.924Z",
+      "version": 1
+    },
+    {
+      "id": "guard-zone-label",
+      "type": "text",
+      "x": 80,
+      "y": 662,
+      "width": 450,
+      "height": 24,
+      "text": "Guardrails - parallel input rails (config/)",
+      "fontSize": 16,
+      "createdAt": "2026-08-15T14:52:05.924Z",
+      "updatedAt": "2026-08-15T14:52:05.924Z",
+      "version": 1
+    },
+    {
+      "id": "jailbreak",
+      "type": "rectangle",
+      "x": 90,
+      "y": 710,
+      "width": 160,
+      "height": 80,
+      "backgroundColor": "#ffc9c9",
+      "strokeColor": "#e03131",
+      "label": {
+        "text": "Jailbreak\nDetection\n(NVIDIA NIM)"
+      },
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:52:05.924Z",
+      "updatedAt": "2026-08-15T14:52:05.924Z",
+      "version": 1
+    },
+    {
+      "id": "content-safety",
+      "type": "rectangle",
+      "x": 270,
+      "y": 710,
+      "width": 160,
+      "height": 80,
+      "backgroundColor": "#ffc9c9",
+      "strokeColor": "#e03131",
+      "label": {
+        "text": "Content Safety\n(NVIDIA NIM)"
+      },
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:52:05.924Z",
+      "updatedAt": "2026-08-15T14:52:05.924Z",
+      "version": 1
+    },
+    {
+      "id": "topic-check",
+      "type": "rectangle",
+      "x": 450,
+      "y": 710,
+      "width": 160,
+      "height": 80,
+      "backgroundColor": "#ffc9c9",
+      "strokeColor": "#e03131",
+      "label": {
+        "text": "Topic Check\n(Groq, history-aware)"
+      },
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:52:05.924Z",
+      "updatedAt": "2026-08-15T14:52:05.924Z",
+      "version": 1
+    },
+    {
+      "id": "gateway-zone",
+      "type": "rectangle",
+      "x": 660,
+      "y": 650,
+      "width": 480,
+      "height": 180,
+      "backgroundColor": "#e9ecef",
+      "strokeColor": "#868e96",
+      "strokeStyle": "dashed",
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:52:05.924Z",
+      "updatedAt": "2026-08-15T14:52:05.924Z",
+      "version": 1
+    },
+    {
+      "id": "gateway-zone-label",
+      "type": "text",
+      "x": 680,
+      "y": 662,
+      "width": 350,
+      "height": 24,
+      "text": "LLM Gateway (Portkey)",
+      "fontSize": 16,
+      "createdAt": "2026-08-15T14:52:05.924Z",
+      "updatedAt": "2026-08-15T14:52:05.924Z",
+      "version": 1
+    },
+    {
+      "id": "response-llm",
+      "type": "rectangle",
+      "x": 700,
+      "y": 710,
+      "width": 190,
+      "height": 80,
+      "backgroundColor": "#a5d8ff",
+      "strokeColor": "#1971c2",
+      "label": {
+        "text": "Response LLM\n(response config)"
+      },
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:52:05.924Z",
+      "updatedAt": "2026-08-15T14:52:05.924Z",
+      "version": 1
+    },
+    {
+      "id": "grader-llm",
+      "type": "rectangle",
+      "x": 920,
+      "y": 710,
+      "width": 190,
+      "height": 80,
+      "backgroundColor": "#a5d8ff",
+      "strokeColor": "#1971c2",
+      "label": {
+        "text": "Grader / Worker LLM\n(worker config)"
+      },
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:52:05.924Z",
+      "updatedAt": "2026-08-15T14:52:05.924Z",
+      "version": 1
+    },
+    {
+      "id": "msuhvjizpgg1uyg9jqp",
+      "type": "arrow",
+      "x": 300,
+      "y": 600,
+      "strokeStyle": "dashed",
+      "label": {
+        "text": "rails"
+      },
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          50
+        ]
+      ],
+      "createdAt": "2026-08-15T14:52:05.924Z",
+      "updatedAt": "2026-08-15T14:52:05.924Z",
+      "version": 1
+    },
+    {
+      "id": "msuhvjiz73jzg2xaf6x",
+      "type": "arrow",
+      "x": 850,
+      "y": 600,
+      "strokeStyle": "dashed",
+      "label": {
+        "text": "LLM calls"
+      },
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          50
+        ]
+      ],
+      "createdAt": "2026-08-15T14:52:05.924Z",
+      "updatedAt": "2026-08-15T14:52:05.924Z",
+      "version": 1
+    },
+    {
+      "id": "retrieval-zone",
+      "type": "rectangle",
+      "x": 60,
+      "y": 880,
+      "width": 1080,
+      "height": 180,
+      "backgroundColor": "#e9ecef",
+      "strokeColor": "#868e96",
+      "strokeStyle": "dashed",
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:53:19.955Z",
+      "updatedAt": "2026-08-15T14:53:19.955Z",
+      "version": 1
+    },
+    {
+      "id": "retrieval-zone-label",
+      "type": "text",
+      "x": 80,
+      "y": 892,
+      "width": 500,
+      "height": 24,
+      "text": "Data & Retrieval Services (src/vector_store/, src/retrieval/)",
+      "fontSize": 16,
+      "createdAt": "2026-08-15T14:53:19.955Z",
+      "updatedAt": "2026-08-15T14:53:19.955Z",
+      "version": 1
+    },
+    {
+      "id": "qdrant",
+      "type": "rectangle",
+      "x": 90,
+      "y": 940,
+      "width": 180,
+      "height": 90,
+      "backgroundColor": "#eebefa",
+      "strokeColor": "#9c36b5",
+      "label": {
+        "text": "Qdrant\n(hybrid vector store,\nTurboQuant 4-bit)"
+      },
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:53:19.955Z",
+      "updatedAt": "2026-08-15T14:53:19.955Z",
+      "version": 1
+    },
+    {
+      "id": "cohere",
+      "type": "rectangle",
+      "x": 292,
+      "y": 940,
+      "width": 180,
+      "height": 90,
+      "backgroundColor": "#ffd8a8",
+      "strokeColor": "#e8590c",
+      "label": {
+        "text": "Cohere\n(reranker)"
+      },
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:53:19.955Z",
+      "updatedAt": "2026-08-15T14:53:19.955Z",
+      "version": 1
+    },
+    {
+      "id": "fireworks",
+      "type": "rectangle",
+      "x": 494,
+      "y": 940,
+      "width": 180,
+      "height": 90,
+      "backgroundColor": "#ffd8a8",
+      "strokeColor": "#e8590c",
+      "label": {
+        "text": "Fireworks\n(dense embeddings)"
+      },
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:53:19.955Z",
+      "updatedAt": "2026-08-15T14:53:19.955Z",
+      "version": 1
+    },
+    {
+      "id": "redis",
+      "type": "rectangle",
+      "x": 696,
+      "y": 940,
+      "width": 180,
+      "height": 90,
+      "backgroundColor": "#99e9f2",
+      "strokeColor": "#0c8599",
+      "label": {
+        "text": "Redis\n(image docstore)"
+      },
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:53:19.955Z",
+      "updatedAt": "2026-08-15T14:53:19.955Z",
+      "version": 1
+    },
+    {
+      "id": "postgres",
+      "type": "rectangle",
+      "x": 898,
+      "y": 940,
+      "width": 180,
+      "height": 90,
+      "backgroundColor": "#99e9f2",
+      "strokeColor": "#0c8599",
+      "label": {
+        "text": "Postgres\n(conversation memory,\nAsyncPostgresSaver)"
+      },
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:53:19.955Z",
+      "updatedAt": "2026-08-15T14:53:19.955Z",
+      "version": 1
+    },
+    {
+      "id": "ingest-zone",
+      "type": "rectangle",
+      "x": 60,
+      "y": 1110,
+      "width": 1080,
+      "height": 190,
+      "backgroundColor": "#e9ecef",
+      "strokeColor": "#868e96",
+      "strokeStyle": "dashed",
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:53:38.593Z",
+      "updatedAt": "2026-08-15T14:53:38.593Z",
+      "version": 1
+    },
+    {
+      "id": "ingest-zone-label",
+      "type": "text",
+      "x": 80,
+      "y": 1122,
+      "width": 500,
+      "height": 24,
+      "text": "Ingestion Pipeline (scripts/, src/ingestion/)",
+      "fontSize": 16,
+      "createdAt": "2026-08-15T14:53:38.593Z",
+      "updatedAt": "2026-08-15T14:53:38.593Z",
+      "version": 1
+    },
+    {
+      "id": "static-src",
+      "type": "rectangle",
+      "x": 90,
+      "y": 1160,
+      "width": 330,
+      "height": 90,
+      "backgroundColor": "#b2f2bb",
+      "strokeColor": "#2f9e44",
+      "label": {
+        "text": "Static docs\ndata/fee_structure.md, data/cgu.md\n-> run_ingestion.py"
+      },
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:53:38.593Z",
+      "updatedAt": "2026-08-15T14:53:38.593Z",
+      "version": 1
+    },
+    {
+      "id": "dynamic-src",
+      "type": "rectangle",
+      "x": 450,
+      "y": 1160,
+      "width": 330,
+      "height": 90,
+      "backgroundColor": "#b2f2bb",
+      "strokeColor": "#2f9e44",
+      "label": {
+        "text": "Web scrape + PDFs\ncgu-odisha.ac.in (notice/exam cell)\n-> ingest_dynamic.py (Gemini)"
+      },
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:53:38.593Z",
+      "updatedAt": "2026-08-15T14:53:38.593Z",
+      "version": 1
+    },
+    {
+      "id": "image-src",
+      "type": "rectangle",
+      "x": 810,
+      "y": 1160,
+      "width": 330,
+      "height": 90,
+      "backgroundColor": "#b2f2bb",
+      "strokeColor": "#2f9e44",
+      "label": {
+        "text": "Campus images\nimages/\n-> index_images.py"
+      },
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:53:38.593Z",
+      "updatedAt": "2026-08-15T14:53:38.593Z",
+      "version": 1
+    },
+    {
+      "id": "msuhxj13dghdv8ic4zh",
+      "type": "arrow",
+      "x": 237.0776994867858,
+      "y": 1152.4279184945717,
+      "strokeStyle": "dashed",
+      "label": {
+        "text": "writes"
+      },
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -39.15539897357161,
+          -114.85583698914343
+        ]
+      ],
+      "start": {
+        "id": "static-src"
+      },
+      "end": {
+        "id": "qdrant"
+      },
+      "createdAt": "2026-08-15T14:53:38.593Z",
+      "updatedAt": "2026-08-15T14:53:38.593Z",
+      "version": 1
+    },
+    {
+      "id": "msuhxj13iw45t5byyb",
+      "type": "arrow",
+      "x": 518.8837963611162,
+      "y": 1156.389506205622,
+      "strokeStyle": "dashed",
+      "label": {
+        "text": "writes"
+      },
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -242.76759272223228,
+          -122.77901241124391
+        ]
+      ],
+      "start": {
+        "id": "dynamic-src"
+      },
+      "end": {
+        "id": "qdrant"
+      },
+      "createdAt": "2026-08-15T14:53:38.593Z",
+      "updatedAt": "2026-08-15T14:53:38.593Z",
+      "version": 1
+    },
+    {
+      "id": "msuhxj13lyrd4pwtks",
+      "type": "arrow",
+      "x": 931.1277668147768,
+      "y": 1153.9317920595286,
+      "strokeStyle": "dashed",
+      "label": {
+        "text": "indexes"
+      },
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -101.25553362955361,
+          -117.86358411905712
+        ]
+      ],
+      "start": {
+        "id": "image-src"
+      },
+      "end": {
+        "id": "redis"
+      },
+      "createdAt": "2026-08-15T14:53:38.593Z",
+      "updatedAt": "2026-08-15T14:53:38.593Z",
+      "version": 1
+    },
+    {
+      "id": "logfire",
+      "type": "rectangle",
+      "x": 1180,
+      "y": 300,
+      "width": 230,
+      "height": 90,
+      "backgroundColor": "#ffec99",
+      "strokeColor": "#f08c00",
+      "label": {
+        "text": "Logfire\n(traces every node,\nLLM call, retrieval)"
+      },
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:53:57.704Z",
+      "updatedAt": "2026-08-15T14:53:57.704Z",
+      "version": 1
+    },
+    {
+      "id": "langsmith",
+      "type": "rectangle",
+      "x": 1180,
+      "y": 450,
+      "width": 230,
+      "height": 90,
+      "backgroundColor": "#ffec99",
+      "strokeColor": "#f08c00",
+      "label": {
+        "text": "LangSmith\n(evaluation/, aevaluate\n+ LLM-as-judge)"
+      },
+      "fillStyle": "solid",
+      "createdAt": "2026-08-15T14:53:57.704Z",
+      "updatedAt": "2026-08-15T14:53:57.704Z",
+      "version": 1
+    },
+    {
+      "id": "msuhxxs1hjg4lenmn8f",
+      "type": "arrow",
+      "x": 1147.9652400304665,
+      "y": 358.75145237125133,
+      "strokeStyle": "dashed",
+      "label": {
+        "text": "traces"
+      },
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          24.06951993906705,
+          -2.251106181351588
+        ]
+      ],
+      "start": {
+        "id": "graph-zone"
+      },
+      "end": {
+        "id": "logfire"
+      },
+      "createdAt": "2026-08-15T14:53:57.704Z",
+      "updatedAt": "2026-08-15T14:53:57.704Z",
+      "version": 1
+    },
+    {
+      "id": "msuhxxs1853vqq5xpbh",
+      "type": "arrow",
+      "x": 1147.9408316788072,
+      "y": 477.01434632042964,
+      "strokeStyle": "dashed",
+      "label": {
+        "text": "evals"
+      },
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          24.118336642385657,
+          2.9497246253278036
+        ]
+      ],
+      "start": {
+        "id": "graph-zone"
+      },
+      "end": {
+        "id": "langsmith"
+      },
+      "createdAt": "2026-08-15T14:53:57.704Z",
+      "updatedAt": "2026-08-15T14:53:57.704Z",
+      "version": 1
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "x": 60,
+      "y": 10,
+      "width": 900,
+      "height": 34,
+      "text": "WhatsApp RAG - CGU Assistant: Architecture",
+      "fontSize": 26,
+      "createdAt": "2026-08-15T14:53:57.704Z",
+      "updatedAt": "2026-08-15T14:53:57.704Z",
+      "version": 1
+    }
+  ],
+  "appState": {
+    "viewBackgroundColor": "#ffffff",
+    "gridSize": null
+  }
+}
